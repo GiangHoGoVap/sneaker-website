@@ -3,24 +3,25 @@
 
 <body>
     <?php
-    $servername = "localhost";
-    $username = "root";
-    $password = "root";
-    $dbname = 'sneaker_fest';
-    $conn = new mysqli($servername, $username, $password, $dbname);
-    if ($conn->connect_error) {
-        die("Connection failed: " . $conn->connect_error);
+    $connStr = "host=localhost port=5432 dbname=sneaker_fest";
+    $conn = pg_connect($connStr);
+
+    // Check connection
+    $stat = pg_connection_status($conn);
+    if ($stat === PGSQL_CONNECTION_BAD) {
+        echo 'Connection status bad';
     }
+
     $q = $_GET["q"];
     $sql = "SELECT COUNT(*) FROM products";
-    $len = $conn->query($sql);
+    $len = pg_query($conn, $sql);
 
     if (strlen($q) > 0) {
         $hint = "";
         for ($i = 0; $i < $len; $i++) {
-            $sql = "SELECT * from products WHERE product_name LIKE '$q%' ORDER BY product_name";
-            $result = $conn->query($sql);
-            while ($row = $result->fetch_assoc()) {
+            $sql = "SELECT * from products WHERE product_name = $q ORDER BY product_name";
+            $result = pg_query($conn, $sql);
+            while ($row = pg_fetch_assoc($result)) {
                 if ($hint == "") {
                     $hint = "<div class='ps-2'>" . $row['product_name'] . "</div>";
                 } else {

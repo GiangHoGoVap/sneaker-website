@@ -35,7 +35,7 @@
                             <div id="collapseOne" class="accordion-collapse collapse show" aria-labelledby="headingOne" data-bs-parent="#accordionExample">
                                 <div class="accordion-body">
                                     <div class="form-check">
-                                        <input class="form-check-input" type="checkbox" id="myCheckbox" name="genderCheck[]" value="menCheck">
+                                        <input class="form-check-input" type="checkbox" name="genderCheck[]" value="menCheck">
                                         <label class="form-check-label h4 fw-normal" for="flexCheckDefault">Men</label>
                                     </div>
                                     <div class="form-check">
@@ -57,7 +57,7 @@
             <div class="col-lg-9">
                 <div class="row">
                     <div class="pull-right pb-4">
-                        <div class="dropdown pull-right">
+                        <div class="pull-right">
 
                             <?php
                             session_start();
@@ -150,8 +150,9 @@
                     $sql;
                     if (isset($_POST['submitSearchItem'])) {
                         $searchItem = $_POST['searchItem'] . "%";
-                        $sql = $conn->prepare("SELECT * FROM products WHERE product_name LIKE ?");
-                        $sql->bind_param("s", $searchItem);
+                        // $sql = $conn->prepare("SELECT * FROM products WHERE product_name LIKE ?");
+                        // $sql->bind_param("s", $searchItem);
+                        $sql = pg_query_params($conn, 'SELECT * FROM products WHERE product_name LIKE $1', array($searchItem));
                     } else {
                         $type = $_GET['type'];
                         if ($type == 'lifestyle') {
@@ -169,36 +170,43 @@
                             } else {
                                 $productGender = 3;
                             }
-                            $sql = $conn->prepare("SELECT * FROM products WHERE product_type = ? AND product_gender = ?");
-                            $sql->bind_param("ii", $productType, $productGender);
+                            // $sql = $conn->prepare("SELECT * FROM products WHERE product_type = ? AND product_gender = ?");
+                            // $sql->bind_param("ii", $productType, $productGender);
+                            $sql = pg_prepare($conn, 'gender_sort', 'SELECT * FROM products WHERE product_type = $1 AND product_gender = $2');
+                            $result = pg_execute($conn, 'gender_sort', array($productType, $productGender));
                         } else if (isset($_GET['sort'])) {
                             $sort = $_GET['sort'];
                             switch ($sort) {
                                 case 'newest': {
-                                        $sql = $conn->prepare("SELECT * FROM products WHERE product_type = ? ORDER BY id");
+                                        // $sql = $conn->prepare("SELECT * FROM products WHERE product_type = ? ORDER BY id");
+                                        $sql = pg_prepare($conn, 'my_sort', 'SELECT * FROM products WHERE product_type = $1 ORDER BY id');
                                         break;
                                     }
                                 case 'descend': {
-                                        $sql = $conn->prepare("SELECT * FROM products WHERE product_type = ? ORDER BY product_price DESC");
+                                        // $sql = $conn->prepare("SELECT * FROM products WHERE product_type = ? ORDER BY product_price DESC");
+                                        $sql = pg_prepare($conn, 'my_sort', 'SELECT * FROM products WHERE product_type = $1 ORDER BY product_price DESC');
                                         break;
                                     }
                                 case 'ascend': {
-                                        $sql = $conn->prepare("SELECT * FROM products WHERE product_type = ? ORDER BY product_price ASC");
+                                        // $sql = $conn->prepare("SELECT * FROM products WHERE product_type = ? ORDER BY product_price ASC");
+                                        $sql = pg_prepare($conn, 'my_sort', 'SELECT * FROM products WHERE product_type = $1 ORDER BY product_price ASC');
                                         break;
                                     }
                             }
-                            $sql->bind_param("i", $productType);
+                            // $sql->bind_param("i", $productType);
+                            $result = pg_execute($conn, 'my_sort', array($productType));
                         } else {
-                            $sql = $conn->prepare("SELECT * FROM products WHERE product_type = ?");
-                            $sql->bind_param("i", $productType);
+                            // $sql = $conn->prepare("SELECT * FROM products WHERE product_type = ?");
+                            // $sql->bind_param("i", $productType);
+                            $sql = pg_prepare($conn, 'default', 'SELECT * FROM products WHERE product_type = $1');
+                            $result = pg_execute($conn, 'default', array($productType));
                         }
                     }
-
-                    $sql->execute();
-                    $result = $sql->get_result();
+                    // $sql->execute();
+                    // $result = $sql->get_result();
                     global $productName, $productPrice;
                     session_start();
-                    while ($row = $result->fetch_assoc()) {
+                    while ($row = pg_fetch_assoc($result)) {
                         $productName = $row["product_name"];
                         $productPrice = $row["product_price"];
                         $productGender = $row["product_gender"];

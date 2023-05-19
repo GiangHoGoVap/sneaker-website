@@ -27,11 +27,11 @@
     <?php
     include_once "components/db/database.php";
     $productID = $_GET['id'];
-    $sql = $conn->prepare("SELECT * FROM products WHERE id = ?");
-    $sql->bind_param("i", $productID);
-    $sql->execute();
-    $result = $sql->get_result();
-    $row = $result->fetch_array();
+    // $sql = $conn->prepare("SELECT * FROM products WHERE id = ?");
+    // $sql->bind_param("i", $productID);
+    // $sql->execute();
+    $sql = pg_query_params($conn, 'SELECT * FROM products WHERE id = $1', array($productID));
+    $row = pg_fetch_array($sql, 0, PGSQL_BOTH);
     ?>
     <!-- Open Content -->
     <section class="bg-light">

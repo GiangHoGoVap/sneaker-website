@@ -10,7 +10,7 @@
                     <div class="col-12">
                         <p class="text-left text-light">
                             Copyright &copy; 2022 SneakerFest | Designed by
-                            <a rel="sponsored" href="#" target="_blank" class="text-decoration-none">Nguyen Minh Tam</a>
+                            <a rel="sponsored" href="#" target="_blank" class="text-decoration-none">Group 5</a>
                         </p>
                     </div>
                 </div>

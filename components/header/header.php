@@ -46,7 +46,7 @@
             </a>
             <div class="d-flex justify-content-end align-items-center" style="gap: 10px">
 
-                <form action="index.php?page=products" method="post">
+                <!-- <form action="index.php?page=products" method="post">
                     <div class="row">
                         <div class="col-8">
                             <input class="form-control me-2" type="text" placeholder="Search" aria-label="Search" name="searchItem" onkeyup="showResult(this.value)">
@@ -56,7 +56,7 @@
                             <button class="btn btn-outline-primary" type="submit" name="submitSearchItem"><i class="fa fa-search"></i></button>
                         </div>
                     </div>
-                </form>
+                </form> -->
 
                 <?php
                 session_start();
