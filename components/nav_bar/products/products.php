@@ -31,22 +31,23 @@
                                 <h4>Gender</h4>
                             </button>
                         </h2>
-                        <form action="index.php?page=products&type=<?php echo $_GET['type']; ?>" method="post">
+                        <form id="my_form" action="index.php?page=products&type=<?php echo $_GET['type']; ?>" method="post">
                             <div id="collapseOne" class="accordion-collapse collapse show" aria-labelledby="headingOne" data-bs-parent="#accordionExample">
                                 <div class="accordion-body">
                                     <div class="form-check">
-                                        <input class="form-check-input" type="checkbox" id="myCheckbox" name="genderCheck[]" value="menCheck">
+                                        <input class="form-check-input" type="checkbox" id="myCheckbox" name="genderCheck[]" value="menCheck" onChange="this.form.submit()" <?php if (in_array("menCheck", $_POST['genderCheck'])) echo "checked='checked'"; ?>>
                                         <label class="form-check-label h4 fw-normal" for="flexCheckDefault">Men</label>
                                     </div>
                                     <div class="form-check">
-                                        <input class="form-check-input" type="checkbox" name="genderCheck[]" value="womenCheck">
+                                        <input class="form-check-input" type="checkbox" name="genderCheck[]" value="womenCheck" onChange="this.form.submit()" <?php if (in_array("womenCheck", $_POST['genderCheck'])) echo "checked='checked'"; ?>>
                                         <label class="form-check-label h4 fw-normal" for="flexCheckDefault">Women</label>
+
                                     </div>
                                     <div class="form-check">
-                                        <input class="form-check-input" type="checkbox" name="genderCheck[]" value="uniCheck">
+                                        <input class="form-check-input" type="checkbox" name="genderCheck[]" value="uniCheck" onChange="this.form.submit()" <?php if (in_array("uniCheck", $_POST['genderCheck'])) echo "checked='checked'"; ?>>
                                         <label class="form-check-label h4 fw-normal" for="flexCheckDefault">Unisex</label>
                                     </div>
-                                    <button type="submit" class="btn btn-primary" name="submitGender">Submit</button>
+                                    <!-- <button type="submit" class="btn btn-primary" name="submitGender">Submit</button> -->
                                 </div>
                             </div>
                         </form>
@@ -56,7 +57,7 @@
 
             <div class="col-lg-9">
                 <div class="row">
-                    <div class="pull-right pb-4">
+                    <div class="pb-4">
                         <div class="dropdown pull-right">
 
                             <?php
@@ -132,7 +133,7 @@
                             </div>
 
                             <!-- Sorted By -->
-                            <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton2" data-bs-toggle="dropdown" aria-expanded="false">
+                            <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton2" aria-expanded="false">
                                 Sorted By
                             </button>
                             <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton2">
@@ -161,16 +162,32 @@
                         } else {
                             $productType = 3;
                         }
-                        if (isset($_POST['submitGender'])) {
-                            if (in_array('menCheck', $_POST['genderCheck'])) {
-                                $productGender = 1;
-                            } else if (in_array('womenCheck', $_POST['genderCheck'])) {
-                                $productGender = 2;
+                        if (isset($_POST['genderCheck'])) {
+                            if (in_array('menCheck', $_POST['genderCheck']) && in_array('womenCheck', $_POST['genderCheck']) && in_array('uniCheck', $_POST['genderCheck'])) {
+                                $sql = $conn->prepare("SELECT * FROM products WHERE product_type = ?");
+                                $sql->bind_param("i", $productType);
                             } else {
-                                $productGender = 3;
+                                if (in_array('menCheck', $_POST['genderCheck']) && in_array('womenCheck', $_POST['genderCheck'])) {
+                                    $sql = $conn->prepare("SELECT * FROM products WHERE product_type = ? AND product_gender !=  3");
+                                    $sql->bind_param("i", $productType);
+                                } else if (in_array('menCheck', $_POST['genderCheck']) && in_array('uniCheck', $_POST['genderCheck'])) {
+                                    $sql = $conn->prepare("SELECT * FROM products WHERE product_type = ? AND product_gender !=  2");
+                                    $sql->bind_param("i", $productType);
+                                } else if (in_array('womenCheck', $_POST['genderCheck']) && in_array('uniCheck', $_POST['genderCheck'])) {
+                                    $sql = $conn->prepare("SELECT * FROM products WHERE product_type = ? AND product_gender !=  1");
+                                    $sql->bind_param("i", $productType);
+                                } else {
+                                    if (in_array('menCheck', $_POST['genderCheck'])) {
+                                        $productGender = 1;
+                                    } else if (in_array('womenCheck', $_POST['genderCheck'])) {
+                                        $productGender = 2;
+                                    } else {
+                                        $productGender = 3;
+                                    }
+                                    $sql = $conn->prepare("SELECT * FROM products WHERE product_type = ? AND product_gender = ?");
+                                    $sql->bind_param("ii", $productType, $productGender);
+                                }
                             }
-                            $sql = $conn->prepare("SELECT * FROM products WHERE product_type = ? AND product_gender = ?");
-                            $sql->bind_param("ii", $productType, $productGender);
                         } else if (isset($_GET['sort'])) {
                             $sort = $_GET['sort'];
                             switch ($sort) {

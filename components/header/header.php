@@ -22,6 +22,7 @@
                 if (this.readyState == 4 && this.status == 200) {
                     document.getElementById("livesearch").innerHTML = this.responseText;
                     document.getElementById("livesearch").style.border = "1px solid #A5ACB2";
+                    document.getElementById("livesearch").style.position = "absolute";
                 }
             }
             xmlhttp.open("GET", "components/nav_bar/products/livesearch.php?q=" + str, true);
@@ -50,7 +51,7 @@
                     <div class="row">
                         <div class="col-8">
                             <input class="form-control me-2" type="text" placeholder="Search" aria-label="Search" name="searchItem" onkeyup="showResult(this.value)">
-                            <div id="livesearch" style="background-color:#F0F0F0; width:auto;"></div>
+                            <div id="livesearch" style="background-color:#F0F0F0; width: 175px;"></div>
                         </div>
                         <div class="col-4">
                             <button class="btn btn-outline-primary" type="submit" name="submitSearchItem"><i class="fa fa-search"></i></button>
