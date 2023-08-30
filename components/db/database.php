@@ -53,6 +53,17 @@
     if (!$conn->query($sql)) {
         echo "Error creating table: " . $conn->error;
     }
+
+    // Create table: feedbacks
+    $sql = "CREATE TABLE if not exists feedbacks (
+        id INT(6) UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+        username VARCHAR(30) NOT NULL,
+        email VARCHAR(50) NOT NULL,
+        msg TEXT NOT NULL
+    )";
+    if (!$conn->query($sql)) {
+        echo "Error creating table: " . $conn->error;
+    }
     ?>
 </body>
 

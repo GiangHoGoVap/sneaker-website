@@ -136,18 +136,18 @@
                     Quisque scelerisque nibh imperdiet, convallis felis rhoncus, pellentesque nulla. Donec ac mollis diam, ut cursus arcu.
                     Etiam eros sapien, fringilla vitae varius eget, cursus eu odio.
                 </p>
-                <form action="#">
+                <form action="components/nav_bar/contact/sendMsg_processing.php" method="post">
                     <div class="input-box">
-                        <input type="name" class="form-control" placeholder="Enter your name">
+                        <input type="name" name="userName" class="form-control" placeholder="Enter your name">
                     </div>
                     <div class="input-box">
-                        <input type="email" class="form-control" placeholder="Enter your email">
+                        <input type="email" name="userEmail" class="form-control" placeholder="Enter your email">
                     </div>
                     <div class="input-box" style="min-height: 110px;">
-                        <input type="text" class="form-control" placeholder="Enter your message">
+                        <input type="text" name="userMsg" class="form-control" placeholder="Enter your message">
                     </div>
                     <div style="margin-top: 12px;">
-                        <button type="button" class="btn btn-outline-primary" style="font-size: 18px;">Send Now</button>
+                        <button type="submit" name="submitMsg" class="btn btn-outline-primary" style="font-size: 18px;">Send Now</button>
                     </div>
                 </form>
             </div>
