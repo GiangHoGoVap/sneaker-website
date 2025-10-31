@@ -17,6 +17,12 @@
     </style>
 </head>
 
+<?php
+if (!isset($_POST['genderCheck'])) {
+    $_POST['genderCheck'] = ['menCheck']; // default checked = Men
+}
+?>
+
 <body>
     <div class="container py-4">
         <div class="row">
@@ -31,21 +37,28 @@
                                 <h4>Gender</h4>
                             </button>
                         </h2>
-                        <form id="my_form" action="index.php?page=products&type=<?php echo $_GET['type']; ?>" method="post">
+                        <form id="my_form" action="index.php?page=products&type=<?php echo $_GET['type'] ?? 'lifestyle'; ?>" method="post">
                             <div id="collapseOne" class="accordion-collapse collapse show" aria-labelledby="headingOne" data-bs-parent="#accordionExample">
                                 <div class="accordion-body">
                                     <div class="form-check">
-                                        <input class="form-check-input" type="checkbox" id="myCheckbox" name="genderCheck[]" value="menCheck" onChange="this.form.submit()" <?php if (in_array("menCheck", $_POST['genderCheck'])) echo "checked='checked'"; ?>>
-                                        <label class="form-check-label h4 fw-normal" for="flexCheckDefault">Men</label>
+                                        <input class="form-check-input" type="checkbox" name="genderCheck[]" value="menCheck"
+                                            onChange="this.form.submit()"
+                                            <?php if (in_array("menCheck", $_POST['genderCheck'])) echo "checked='checked'"; ?>>
+                                        <label class="form-check-label h4 fw-normal">Men</label>
                                     </div>
-                                    <div class="form-check">
-                                        <input class="form-check-input" type="checkbox" name="genderCheck[]" value="womenCheck" onChange="this.form.submit()" <?php if (in_array("womenCheck", $_POST['genderCheck'])) echo "checked='checked'"; ?>>
-                                        <label class="form-check-label h4 fw-normal" for="flexCheckDefault">Women</label>
 
-                                    </div>
                                     <div class="form-check">
-                                        <input class="form-check-input" type="checkbox" name="genderCheck[]" value="uniCheck" onChange="this.form.submit()" <?php if (in_array("uniCheck", $_POST['genderCheck'])) echo "checked='checked'"; ?>>
-                                        <label class="form-check-label h4 fw-normal" for="flexCheckDefault">Unisex</label>
+                                        <input class="form-check-input" type="checkbox" name="genderCheck[]" value="womenCheck"
+                                            onChange="this.form.submit()"
+                                            <?php if (in_array("womenCheck", $_POST['genderCheck'])) echo "checked='checked'"; ?>>
+                                        <label class="form-check-label h4 fw-normal">Women</label>
+                                    </div>
+
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" name="genderCheck[]" value="uniCheck"
+                                            onChange="this.form.submit()"
+                                            <?php if (in_array("uniCheck", $_POST['genderCheck'])) echo "checked='checked'"; ?>>
+                                        <label class="form-check-label h4 fw-normal">Unisex</label>
                                     </div>
                                     <!-- <button type="submit" class="btn btn-primary" name="submitGender">Submit</button> -->
                                 </div>
@@ -61,8 +74,8 @@
                         <div class="dropdown pull-right">
 
                             <?php
-                            session_start();
-                            if ($_SESSION['user_lv'] > 0) {
+                            // session_start();
+                            if (isset($_SESSION["user_lv"]) && $_SESSION['user_lv'] > 0) {
                                 echo "<button class='btn btn-primary' type='button' data-bs-toggle='modal' data-bs-target='#exampleModal'>Add New Item</button>";
                             }
                             ?>
@@ -214,7 +227,7 @@
                     $sql->execute();
                     $result = $sql->get_result();
                     global $productName, $productPrice;
-                    session_start();
+                    // session_start();
                     while ($row = $result->fetch_assoc()) {
                         $productName = $row["product_name"];
                         $productPrice = $row["product_price"];
@@ -230,14 +243,14 @@
                                     <div class="card-img-overlay rounded-0 d-flex product-overlay align-items-center justify-content-center">
                                         <ul class="list-unstyled">
                                             <?php
-                                            session_start();
-                                            if ($_SESSION['user_lv'] > 0) {
+                                            // session_start();
+                                            if (isset($_SESSION["user_lv"]) && $_SESSION['user_lv'] > 0) {
                                                 echo "<li><button class='btn btn-primary text-white' style='width: 45px;' type='button' data-bs-toggle='modal' data-bs-target='#exampleModal2'><i class='fa fa-pencil' aria-hidden='true'></i></button></li>";
                                             }
                                             ?>
                                             <li><a class="btn btn-primary text-white mt-2" style="width: 45px;" href="index.php?page=product&id=<?php echo $row["id"]; ?>"><i class="fa fa-eye" aria-hidden="true"></i></a></li>
                                             <?php
-                                            if ($_SESSION['user_lv'] > 0) {
+                                            if (isset($_SESSION["user_lv"]) && $_SESSION['user_lv'] > 0) {
                                                 echo "<li><button class='btn btn-primary text-white mt-2' style='width: 45px;' type='button' data-bs-toggle='modal' data-bs-target='#exampleModal3'><i class='fa fa-trash' aria-hidden='true'></i></button></li>";
                                             }
                                             ?>
